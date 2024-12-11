@@ -9,10 +9,10 @@
 #include <string.h>
 
 #include "gc_prelude.h"
-#include "vec.h"
+#include "vector.h"
 
-void *str_split(const char *str, char delim) {
-    void* ret = new_vec();
+void* str_split(String str, char delim) {
+    void* ret = new_Vector();
 
     if (str == NULL) return NULL;
     if (*str == '\n') {
@@ -46,12 +46,12 @@ void *str_split(const char *str, char delim) {
         buf[size] = '\0';
         memcpy(buf, begin, size * sizeof(char));
         begin = p + 1;
-        vec_push_back(ret, buf);
+        Vector_pushBack(ret, buf);
     }
     return ret;
 }
 
-char *str_strip(const char *str) {
+String str_strip(String str) {
     if (str == NULL) return NULL;
     int len = strlen(str);
     const char *begin = str;
@@ -69,21 +69,20 @@ char *str_strip(const char *str) {
     return buf;
 }
 
-typedef struct {
+struct string_builder {
     size_t size;
     size_t cap;
     char *buf;
-} str_builder_t;
+};
 
-// string stream
-void* new_ss() {
-    str_builder_t *self = malloc(sizeof(str_builder_t));
-    *self = (str_builder_t){.size = 0, .cap = 16};
+StringBuilder new_StringBuilder() {
+    StringBuilder self = malloc(sizeof(struct string_builder));
+    *self = (struct string_builder){.size = 0, .cap = 16};
     self->buf = malloc(sizeof(char) * 17);
     return self;
 }
 
-static void ss_reserve(str_builder_t *self, int extra) {
+static void StringBuilder_reserve(StringBuilder self, int extra) {
     if (self->size + extra <= self->cap) {
         return;
     }
@@ -93,42 +92,38 @@ static void ss_reserve(str_builder_t *self, int extra) {
     self->cap = new_cap;
 }
 
-void ss_add(void *self_, char *format, ...) {
-    str_builder_t *self = self_;
+void StringBuilder_append(StringBuilder self, String format, ...) {
     va_list va1;
     va_list va2;
     va_start(va1, format);
     va_copy(va2, va1);
     int size = vsnprintf(NULL, 0, format, va1);
-    ss_reserve(self, size);
+    StringBuilder_reserve(self, size);
     vsnprintf(self->buf + self->size, self->cap - self->size + 1, format, va2);
     self->size += size;
 }
 
-void ss_addc(void *self_, char c) {
-    str_builder_t *self = self_;
-    ss_reserve(self, 1);
+void StringBuilder_appendChar(StringBuilder self, char c) {
+    StringBuilder_reserve(self, 1);
     self->buf[self->size] = c;
     self->size++;
 }
 
-char *ss_cstr(void *self_) {
-    str_builder_t *self = self_;
+String StringBuilder_getString(StringBuilder self) {
     return self->buf;    
 }
 
-size_t ss_size(void *self_) {
-    str_builder_t *self = self_;
+size_t StringBuilder_size(StringBuilder self) {
     return self->size;
 }
 
-char *fgetline(FILE *fp) {
-    void *ss = new_ss();
+String fgetline(FILE *fp) {
+    StringBuilder sb = new_StringBuilder();
     while (true) {
         int c = fgetc(fp);
-        if (c == EOF && ss_size(ss) == 0) return NULL;
-        if (c != EOF) ss_addc(ss, c);
-        if (c == EOF || c == '\n') return ss_cstr(ss);
+        if (c == EOF && StringBuilder_size(sb) == 0) return NULL;
+        if (c != EOF) StringBuilder_appendChar(sb, c);
+        if (c == EOF || c == '\n') return StringBuilder_getString(sb);
     }
     return NULL;
 }

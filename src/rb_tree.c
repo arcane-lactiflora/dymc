@@ -29,20 +29,20 @@
 #define BLACK 0
 
 static rb_node_t *rb_tree_minmax(rb_tree_t *, int);
-void *rb_tree_min(rb_tree_t *head) { return rb_tree_minmax(head, -1); }
-void *rb_tree_max(rb_tree_t *head) { return rb_tree_minmax(head, 1); }
+rb_node_t *rb_tree_min(rb_tree_t *head) { return rb_tree_minmax(head, -1); }
+rb_node_t *rb_tree_max(rb_tree_t *head) { return rb_tree_minmax(head, 1); }
 
-void *rb_tree_left(void *node) {
+rb_node_t *rb_tree_left(rb_node_t *node) {
     rb_node_t *elm = node;
     if (node == NULL) return NULL;
     return elm->entry.rbe_left;
 }
-void *rb_tree_right(void *node) {
+rb_node_t *rb_tree_right(rb_node_t *node) {
     rb_node_t *elm = node;
     if (node == NULL) return NULL;
     return elm->entry.rbe_right;
 }
-void *rb_tree_parent(void *node) {
+rb_node_t *rb_tree_parent(rb_node_t *node) {
     rb_node_t *elm = node;
     if (node == NULL) return NULL;
     return elm->entry.rbe_parent;
@@ -222,7 +222,7 @@ static void rb_tree_remove_color(rb_tree_t *head, rb_node_t *parent,
     if (elm) elm->entry.rbe_color = BLACK;
 }
 
-void rb_tree_remove(rb_tree_t *head, void *elmv) {
+void rb_tree_remove(rb_tree_t *head, rb_node_t *elmv) {
     rb_node_t *elm = elmv;
     rb_node_t *child, *parent;
     int color;
@@ -289,7 +289,7 @@ color:
     if (color == 0) rb_tree_remove_color(head, parent, child);
 }
 
-void *rb_tree_insert(rb_tree_t *head, void *elmv) {
+rb_node_t *rb_tree_insert(rb_tree_t *head, rb_node_t *elmv) {
     rb_node_t *elm = elmv;
     rb_node_t *tmp;
     rb_node_t *parent = NULL;
@@ -297,7 +297,7 @@ void *rb_tree_insert(rb_tree_t *head, void *elmv) {
     tmp = head->rbh_root;
     while (tmp) {
         parent = tmp;
-        comp = head->cmp((void *)elm->content, (void *)parent->content);
+        comp = head->cmp(elm->key, parent->key);
         if (comp < 0)
             tmp = tmp->entry.rbe_left;
         else if (comp > 0)
@@ -325,11 +325,11 @@ void *rb_tree_insert(rb_tree_t *head, void *elmv) {
     return (NULL);
 }
 
-void *rb_tree_find(rb_tree_t *head, void *key) {
+rb_node_t *rb_tree_find(rb_tree_t *head, void *key) {
     rb_node_t *tmp = head->rbh_root;
     int comp;
     while (tmp) {
-        comp = head->cmp(key, (void *)tmp->content);
+        comp = head->cmp(key, tmp->key);
         if (comp < 0)
             tmp = tmp->entry.rbe_left;
         else if (comp > 0)
@@ -340,7 +340,7 @@ void *rb_tree_find(rb_tree_t *head, void *key) {
     return (NULL);
 }
 
-void *rb_tree_next(rb_tree_t *head, void *elmv) {
+rb_node_t *rb_tree_next(rb_tree_t *head, rb_node_t *elmv) {
     rb_node_t *elm = elmv;
     if (elm->entry.rbe_right) {
         elm = elm->entry.rbe_right;
@@ -372,4 +372,3 @@ static rb_node_t *rb_tree_minmax(rb_tree_t *head, int val) {
     }
     return parent;
 };
-

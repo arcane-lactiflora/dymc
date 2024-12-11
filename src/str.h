@@ -4,20 +4,23 @@
 #include <stdio.h>
 #include <stddef.h>
 
-char *str_strip(const char *str);
+#include "basic_types.h"
+// #include "list.h"
 
-// return: vec of char*
-void *str_split(const char *str, char delim);
+String String_strip(String s);
+// List String_split(String str, char delim);
+
+// StringBuilder
+typedef struct string_builder* StringBuilder;
+StringBuilder new_StringBuilder();
+void StringBuilder_append(StringBuilder self, String format, ...);
+void StringBuilder_appendChar(StringBuilder self, char c);
+String StringBuilder_getString(StringBuilder self);
+size_t StringBuilder_size(StringBuilder self);
 
 
-// string stream
-void* new_ss();
-void ss_add(void *self, char *format, ...);
-void ss_addc(void *self, char c);
-char *ss_cstr(void *self);
-size_t ss_size(void* self);
-
-char *fgetline(FILE *fp);
+// Utilities
+String fgetline(FILE *fp);
 int fpeek(FILE *fp);
 
 #endif

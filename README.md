@@ -1,6 +1,6 @@
 # DymC
 
-Utility library for very dynamic typed programming in C with [bdwgc](https://github.com/ivmai/bdwgc).
+Programming C in Java-style with [bdwgc](https://github.com/ivmai/bdwgc).
 
 ## Dependencies
 
@@ -24,51 +24,48 @@ Run tests:
 
 ### Vector
 
-    #include <dymc.h>
     #include <stdio.h>
 
+    #include "dymc.h"
+
     int main() {
-        void *v = new_vec();
+        Vector v = new_Vector();
+        
+        Integer elem = new_Integer(100);
+        Vector_pushBack(v, elem);
 
-        int *p;
+        elem = new_Integer(101);
+        Vector_pushBack(v, elem);
 
-        p= malloc(sizeof(int));
-        *p = 100;
-        vec_push_back(v, p);
-
-        p = malloc(sizeof(int));
-        *p = 101;
-        vec_push_back(v, p);
-
-        for (int i = 0; i < vec_size(v); i++) {
-            printf("%d\n", *(int*)vec_get(v, i));
+        for (int i = 0; i < Vector_size(v); i++) {
+            printf("%d\n", *(Integer)Vector_get(v, i));
         }
 
         return 0;
     }
 
-### Map/Dict
+### TreeMap
 
-    #include <dymc.h>
     #include <stdio.h>
+    #include <string.h>
+
+    #include "dymc.h"
 
     int main() {
-        void *d = new_dict();
-        int *p;
+        TreeMap dict = new_TreeMap((CompareFunc)strcmp);
 
-        p = malloc(sizeof(int));
-        *p = 1;
-        dict_set(d, "a", p);
+        TreeMap_set(dict, "a", new_Integer(1));
+        TreeMap_set(dict, "b", new_Integer(2));
 
-        p = malloc(sizeof(int));
-        *p = 2;
-        dict_set(d, "b", p);
+        printf("%d\n", *(Integer)TreeMap_get(dict, "a"));
 
-        printf("%d\n", *(int*)dict_get(d, "a"));
-
-        void *iter;
-        for (iter = dict_begin(d); iter != NULL; iter = dict_next(d, iter)) {
-            printf("key: %s, value: %d\n", dict_iter_key(iter), *(int*)dict_iter_value(iter));
+        TreeMapIter iter;
+        for (iter = TreeMap_begin(dict);
+                iter != NULL;
+                iter = TreeMap_next(dict, iter)) {
+            printf("key: %s, value: %d\n",
+                    TreeMapIter_getKey(iter),
+                    *(Integer)TreeMapIter_getValue(iter));
         }
 
         return 0;

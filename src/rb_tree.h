@@ -35,7 +35,8 @@ struct rb_node {
         struct rb_node *rbe_parent;
         int rbe_color;
     } entry;
-    char content[0];
+    void *key;
+    void *value;
 };
 typedef struct rb_node rb_node_t;
 
@@ -46,16 +47,16 @@ struct rb_tree {
 };
 typedef struct rb_tree rb_tree_t;
 
-void rb_tree_remove(rb_tree_t *, void *iter);
+void rb_tree_remove(rb_tree_t *, rb_node_t *iter);
 
 // return a iterator
-void *rb_tree_insert(rb_tree_t *, void *treenode);
-void *rb_tree_find(rb_tree_t *, void *val);
-void *rb_tree_next(rb_tree_t *, void *iter);
-void *rb_tree_min(rb_tree_t *);
-void *rb_tree_max(rb_tree_t *);
-void *rb_tree_left(void *node);
-void *rb_tree_right(void *node);
-void *rb_tree_parent(void *node);
+rb_node_t* rb_tree_insert(rb_tree_t *, rb_node_t *treenode);
+rb_node_t* rb_tree_find(rb_tree_t *, void* key);
+rb_node_t* rb_tree_next(rb_tree_t *, rb_node_t *iter);
+rb_node_t* rb_tree_min(rb_tree_t *);
+rb_node_t* rb_tree_max(rb_tree_t *);
+rb_node_t* rb_tree_left(rb_node_t *node);
+rb_node_t* rb_tree_right(rb_node_t *node);
+rb_node_t* rb_tree_parent(rb_node_t *node);
 
 #endif
