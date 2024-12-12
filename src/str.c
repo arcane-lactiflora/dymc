@@ -9,17 +9,17 @@
 #include <string.h>
 
 #include "gc_prelude.h"
-#include "vector.h"
+#include "basic_types.h"
 
-void* str_split(String str, char delim) {
-    void* ret = new_Vector();
+Vector String_split(String str, char delim) {
+    Vector ret = new_Vector();
 
     if (str == NULL) return NULL;
     if (*str == '\n') {
         return ret;
     }
     int count = 0;
-    const char *begin = str;
+    String begin = str;
     for (const char *p = str; *p != '\0'; p++) {
         if (*p != delim && !(delim == '\0' && isspace(*p))) {
             continue;
@@ -42,7 +42,7 @@ void* str_split(String str, char delim) {
             begin = p + 1;
             continue;
         }
-        char *buf = malloc(sizeof(char) * (size + 1));
+        char* buf = malloc(sizeof(char) * (size + 1));
         buf[size] = '\0';
         memcpy(buf, begin, size * sizeof(char));
         begin = p + 1;

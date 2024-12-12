@@ -5,10 +5,10 @@
 #include <stddef.h>
 
 #include "basic_types.h"
-// #include "list.h"
+#include "vector.h"
 
 String String_strip(String s);
-// List String_split(String str, char delim);
+Vector String_split(String str, char delim);
 
 // StringBuilder
 typedef struct string_builder* StringBuilder;
